@@ -29,6 +29,11 @@ objects:
               - containerPort: 5601
                 name: kibana-tcp
                 protocol: TCP
+              env:
+                - name: elasticsearch.username
+                  value: elastic
+                - name: elasticsearch.password
+                  value: 23gv7co7EQgmva9fKmQl
 
   - apiVersion: v1
     kind: Service
