@@ -24,7 +24,7 @@ objects:
         spec:
           containers:
             - name: kibana
-              image: 172.30.1.1:5000/test/kibana:1
+              image: docker.elastic.co/kibana/kibana:7.6.1
               ports:
               - containerPort: 5601
                 name: kibana-tcp
@@ -34,6 +34,14 @@ objects:
                   value: elastic
                 - name: elasticsearch.password
                   value: 23gv7co7EQgmva9fKmQl
+              volumeMounts:
+                - name: kibana-config
+                  mountPath: /usr/share/kibana/config/kibana.yml
+                  subPath: kibana.yml
+          volumes:
+            - name: kibana-config
+              configMap:
+                name: kibana-config
 
   - apiVersion: v1
     kind: Service
@@ -49,3 +57,19 @@ objects:
           protocol: TCP
       selector:
         role: kibana
+
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: kibana-config
+    data:
+      kibana.yml: ${KIBANA_YML}
+
+parameters:
+  - name: KIBANA_YML
+    value: |
+      server.name: kibana
+      server.host: "0"
+      elasticsearch.hosts: [ "http://elasticsearch:9200" ]
+      elasticsearch.username: "kibana"
+      elasticsearch.password: "23gv7co7EQgmva9fKmQl"
